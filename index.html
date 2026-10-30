@@ -938,7 +938,7 @@
             });
         }
 
-        // GitHub API Fetch
+        // GitHub API Fetch with Repository Exclusion
         async function fetchGitHubRepos(username) {
             const grid = document.getElementById('githubRepoGrid');
             grid.innerHTML = `
@@ -948,16 +948,29 @@
             `;
 
             try {
-                const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=6`);
+                // Fetch up to 15 repos so filtering out meta repos doesn't reduce your results below 6
+                const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=15`);
                 if (!response.ok) {
                     throw new Error('User or repositories not found');
                 }
-                const repos = await response.json();
-                 
+                const rawRepos = await response.json();
+
+                // 1. Define exact repository names you want to hide
+                const EXCLUDED_REPOS = [
+                    'swathi-portfolio', 
+                    'swathisadasivan', 
+                    'swathisadasivan.github.io'
+                ];
+
+                // 2. Filter out forks and excluded repositories, then select the top 6
+                const repos = rawRepos
+                    .filter(repo => !repo.fork && !EXCLUDED_REPOS.includes(repo.name.toLowerCase()))
+                    .slice(0, 6);
+            
                 if (repos.length === 0) {
                     grid.innerHTML = `
                         <div class="col-span-full py-8 text-center text-gray-500 glass-card rounded-2xl">
-                            <p class="text-sm">No public repositories found for @${username}.</p>
+                            <p class="text-sm">No featured public projects found for @${username}.</p>
                         </div>
                     `;
                     return;
