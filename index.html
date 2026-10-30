@@ -954,6 +954,9 @@
                 }
                 const repos = await response.json();
 
+                // Filter out site portfolio repositories
+                const repos = rawRepos.filter(repo => !repo.fork && repo.name.toLowerCase() !== 'swathi-portfolio' && repo.name.toLowerCase() !== 'swathisadasivan.github.io');
+
                 if (repos.length === 0) {
                     grid.innerHTML = `
                         <div class="col-span-full py-8 text-center text-gray-500 glass-card rounded-2xl">
