@@ -953,14 +953,7 @@
                     throw new Error('User or repositories not found');
                 }
                 const repos = await response.json();
-                 // List repositories to exclude from the live showcase
-                const EXCLUDED_REPOS = ['swathi-portfolio', 'swathisadasivan', 'swathisadasivan.github.io'];
-
-                // Filter out forks and excluded meta-repositories, then take the top 6
-                const repos = allRepos
-                        .filter(repo => !repo.fork && !EXCLUDED_REPOS.includes(repo.name.toLowerCase()))
-                        .slice(0, 6);
-             
+                 
                 if (repos.length === 0) {
                     grid.innerHTML = `
                         <div class="col-span-full py-8 text-center text-gray-500 glass-card rounded-2xl">
